@@ -57,14 +57,15 @@ void compute_ext_net_stats(struct stats_net_dev *net_curr,      /* IN */
 {
 	double rx_kb, tx_kb;
 
+    /* Source: "print_net_dev_stats" in pr_stat.c (sysstat) */
     ext_net->rx_pktps = S_VALUE(net_prev->rx_packets, net_curr->rx_packets, interval);
     ext_net->tx_pktps = S_VALUE(net_prev->tx_packets, net_curr->tx_packets, interval);
-    ext_net->rx_kbps = S_VALUE(net_prev->rx_bytes, net_curr->rx_bytes, interval);
-    ext_net->tx_kbps = S_VALUE(net_prev->tx_bytes, net_curr->tx_bytes, interval);
 
-    /* Source: "print_net_dev_stats" in pr_stat.c (sysstat) */
     rx_kb = S_VALUE(net_prev->rx_bytes, net_curr->rx_bytes, interval);
     tx_kb = S_VALUE(net_prev->tx_bytes, net_curr->tx_bytes, interval);
+
+    ext_net->rx_kbps = rx_kb / 1024;
+    ext_net->tx_kbps = tx_kb/ 1024;
     ext_net->util = compute_ifutil(net_curr, rx_kb, tx_kb);
 }
 

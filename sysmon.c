@@ -40,7 +40,7 @@ static struct ext_stats avg_ext_stats;
 /* log */
 static FILE *fp = NULL;
 static int realtime_logging = 0;
-static unsigned int print_flag = NET_ALL;
+static unsigned int print_flag = DISK_ALL;
 static char *print_headers[]=
 {/* CPU */
  "cpu_user", "cpu_nice", "cpu_sys", "cpu_idle", "cpu_iowait", 
@@ -283,6 +283,7 @@ int main(int argc, char* argv[])
     signal(SIGINT, signal_callback_handler); /* Set up a signal handler */
     read_stats(&base_stats);
     /* Obtain speed/duplex info for eth0 */
+    read_net_dev(&st.net, 1);
     read_if_info(&st.net, 1); 
     base_stats.net.speed = st.net.speed;
     base_stats.net.duplex = st.net.duplex;
@@ -292,6 +293,8 @@ int main(int argc, char* argv[])
     bzero((void *)&avg_ext_stats, sizeof(struct ext_stats));
     /* For real-time logging */
     if (realtime_logging) fprint_header(fp, print_flag);
+    /* Get HZ */
+    get_HZ();
 
     while (1) { /* Anyways, we record stats for average computation */
         usleep(INTERVAL_SEC * SEC_TO_MSEC);
