@@ -65,12 +65,18 @@ double compute_ifutil(struct stats_net_dev *st_net_dev, double rx, double tx)
 	unsigned long long speed;
 
 	if (st_net_dev->speed) {
+        /* https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-class-net */
+        /* /sys/class/net/<iface>/speed 
+		/* Indicates the interface latest or current speed value. Value is */
+		/* an integer representing the link speed in Mbits/sec. */
 
 		speed = (unsigned long long) st_net_dev->speed * 1000000;
 
 		if (st_net_dev->duplex == C_DUPLEX_FULL) {
 			/* Full duplex */
 			if (rx > tx) {
+                /* (rx [bytes/sec] * 8 [bit/bytes] / speed [bits/sec]) * 100 */
+                /* 1000 Mbps = 125 MBps */
 				return (rx * 800 / speed);
 			}
 			else {

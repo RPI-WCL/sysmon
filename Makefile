@@ -1,6 +1,6 @@
 INCLUDE_DIR = ./include
 CC = gcc
-CFLAGS = -DDEBUG -I$(INCLUDE_DIR)
+CFLAGS = -DxDEBUG -I$(INCLUDE_DIR)
 
 OBJ_DIR = ./obj
 LIB_DIR = 

@@ -23,8 +23,8 @@
 #define TOT_TICKS       0x00001000
 /* Disk: processed stats */
 #define TPS             0x00002000
-#define RD_KB           0x00004000
-#define WR_KB           0x00008000
+#define RD_KBYTES       0x00004000
+#define WR_KBYTES       0x00008000
 #define RD_KBPS         0x00010000
 #define WR_KBPS         0x00020000
 #define DISK_UTIL       0x00040000
@@ -33,8 +33,8 @@
 /* Net: basic stats */
 #define RX_PACKETS      0x00080000
 #define TX_PACKETS      0x00100000
-#define RX_BYTES        0x00200000
-#define TX_BYTES        0x00400000
+#define RX_KBYTES       0x00200000
+#define TX_KBYTES       0x00400000
 /* Net: processed stats */
 #define RX_PKTPS        0x00800000
 #define TX_PKTPS        0x01000000
@@ -48,7 +48,9 @@
 #define MEM_USED        0x20000000
 #define MEM_UTIL        0x40000000
 #define MEM_ALL         0x70000000
+#define MEM_USED_DBL    0x80000000      /* Special flag to display mean/var */
 
+#define UTIL_ALL        (CPU_UTIL | DISK_UTIL | NET_UTIL | MEM_UTIL)
 #define PRINT_ALL       0x7FFFFFFF
 
 #endif /* #ifndef _PRINT_FLAGS_H */
