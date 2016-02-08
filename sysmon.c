@@ -327,10 +327,14 @@ int main(int argc, char* argv[])
     unsigned long long interval;
     char *logfile = LOG_FILE;
 
-    /* Usage: ./sysmon [real-time logging switch] [log filename] */
+    /* Usage: ./sysmon [real-time logging switch] [log filename] [print flag]*/
     realtime_logging = (1 < argc && (strcmp("1", argv[1]) == 0));
-    if (2 < argc)
+    if (2 <= argc)
         logfile = argv[2];
+    if (3 <= argc && (strncmp("0x", argv[3], 2) == 0)) {
+        print_flag = (int)strtol(argv[3], NULL, 0); /* Expecting 0x... */
+    }
+
     #ifndef DEBUG
     if ((fp = fopen(logfile, "w+")) == NULL) {
         fprintf(stderr, "opening logfile failed\n");
@@ -339,6 +343,7 @@ int main(int argc, char* argv[])
     #else
     fp = stdout;
     #endif
+
 
     /* Initialization */
     signal(SIGINT, signal_callback_handler); /* Set up a signal handler */
