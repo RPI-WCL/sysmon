@@ -326,14 +326,24 @@ int main(int argc, char* argv[])
     struct ext_stats ext_st;
     unsigned long long interval;
     char *logfile = LOG_FILE;
+    int speed = -1, duplex = -1;
+    
 
-    /* Usage: ./sysmon [real-time logging switch] [log filename] [print flag]*/
-    realtime_logging = (1 < argc && (strcmp("1", argv[1]) == 0));
-    if (2 <= argc)
-        logfile = argv[2];
-    if (3 <= argc && (strncmp("0x", argv[3], 2) == 0)) {
+    /* Usage: ./sysmon [real-time logging switch] [log filename] [print flag] (netif speed) (netif duplex)
+       netif duplex takes C_DUPLEX_HALF=1 or C_DUPLEX_FULL=2 */
+    
+    if (2 <= argc)      realtime_logging = (strcmp("1", argv[1]) == 0);
+    if (3 <= argc)      logfile = argv[2];
+    if (4 <= argc && (strncmp("0x", argv[3], 2) == 0))
         print_flag = (int)strtol(argv[3], NULL, 0); /* Expecting 0x... */
-    }
+    if (5 <= argc)      speed = atoi(argv[4]);
+    if (6 <= argc)      duplex = atoi(argv[5]);
+
+    printf ("realtime logging : %s\n", realtime_logging ? "enabled" : "disabled");
+    printf ("log file         : %s\n", logfile);
+    printf ("print flag       : 0x%08x\n", print_flag);
+    printf ("speed            : %d\n", speed);
+    printf ("duplex           : %d\n", duplex);
 
     #ifndef DEBUG
     if ((fp = fopen(logfile, "w+")) == NULL) {
@@ -352,9 +362,11 @@ int main(int argc, char* argv[])
     /* Obtain speed/duplex info for eth0 */
     read_net_dev(&st.net, 1);
     read_if_info(&st.net, 1); 
-    base_stats.net.speed = st.net.speed;
-    base_stats.net.duplex = st.net.duplex;
-    st_prev = base_stats;
+    /* VMs on Google Clouds do not let you read files under /sys/class/net/eth0/
+       See also: http://unix.stackexchange.com/questions/77750/checking-the-speed-of-active-network-connections */
+    base_stats.net.speed = (0 < speed) ? speed : st.net.speed;
+    base_stats.net.duplex = (0 < duplex) ? duplex : st.net.duplex;
+    st = st_prev = base_stats;
     /* Initialize variables for min/max/mean/var computation */
     num_samples = 1;
     set_max_ext_stats(&min);

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "utils.h"
 #include "ext_stats.h"
 
